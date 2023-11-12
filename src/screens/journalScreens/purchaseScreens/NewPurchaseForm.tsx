@@ -20,7 +20,7 @@ type Props = {
 const NewPurchaseForm = ({ visibility, setVisibility }: Props) => {
   // Form Input Variable
   const [name, setName] = useState("");
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [date, setDate] = useState<Date | undefined>();
   const [amount, setAmount] = useState("");
 
   // Form Clear
