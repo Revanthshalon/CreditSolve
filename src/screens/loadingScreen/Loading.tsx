@@ -5,8 +5,8 @@ import { ActivityIndicator } from "react-native-paper";
 
 const Loading = () => {
   return (
-    <SafeAreaView>
-      <View>
+    <SafeAreaView style={styles.containerWrapper}>
+      <View style={styles.container}>
         <ActivityIndicator animating={true} size="large" />
       </View>
     </SafeAreaView>
@@ -15,4 +15,11 @@ const Loading = () => {
 
 export default Loading;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  containerWrapper: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+  },
+});
