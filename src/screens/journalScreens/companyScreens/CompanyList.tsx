@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Keyboard,
   NativeSyntheticEvent,
@@ -15,8 +15,29 @@ import CompanyListRow from "../../../components/CompanyListRow";
 import NewCompanyForm from "./NewCompanyForm";
 import { Ionicons } from "@expo/vector-icons";
 import { StackActions } from "@react-navigation/native";
+import realmContext from "../../../data/dbContext";
+import { useUser } from "@realm/react";
+import Company from "../../../models/Company";
+import { FlatList } from "react-native-gesture-handler";
 
 const CompanyList = () => {
+  // Realm Context
+  const { useRealm, useQuery } = realmContext;
+  const realm = useRealm();
+  const user = useUser();
+
+  // Getting Company List Query
+  const Companies = useQuery(Company)
+    .filtered(`_uid == "${user.id}"`)
+    .sorted("_id");
+
+  // Change the Companies list if the user is changed
+  useEffect(() => {
+    realm.subscriptions.update((mutableSubs) =>
+      mutableSubs.add(Companies, { name: "UserSubscriptions" })
+    );
+  }, []);
+
   // Getting Drawer Navigation Actions
   const nav = useNavigation();
   // Search Text Variable
@@ -47,15 +68,29 @@ const CompanyList = () => {
             }}
           />
           <View style={styles.listContainer}>
-            <TouchableOpacity
-              onPress={() => {
-                nav.dispatch(
-                  StackActions.push("CompanyInfo", { id: "companyid" })
+            <FlatList
+              data={Companies}
+              keyExtractor={(item) => item._id.toString()}
+              renderItem={({ item }) => {
+                return (
+                  <TouchableOpacity
+                    onPress={() => {
+                      nav.dispatch(
+                        StackActions.push("CompanyInfo", {
+                          id: item._id.toString(),
+                        })
+                      );
+                    }}
+                  >
+                    <CompanyListRow
+                      name={item.name}
+                      balance={item.balance}
+                      contact={item.contact}
+                    />
+                  </TouchableOpacity>
                 );
               }}
-            >
-              <CompanyListRow name="Test" balance={500} contact="123" />
-            </TouchableOpacity>
+            />
           </View>
           <NewCompanyForm
             visibility={formVisibility}
