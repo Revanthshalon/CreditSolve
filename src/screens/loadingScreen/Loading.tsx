@@ -3,9 +3,7 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ActivityIndicator } from "react-native-paper";
 
-type Props = {};
-
-const Loading = (props: Props) => {
+const Loading = () => {
   return (
     <SafeAreaView>
       <View>
