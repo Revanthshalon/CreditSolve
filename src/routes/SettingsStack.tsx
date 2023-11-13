@@ -8,7 +8,7 @@ export type SettingsStackParamList = {
 const SettingsStack = () => {
   const Stack = createNativeStackNavigator<SettingsStackParamList>();
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={Setting} />
     </Stack.Navigator>
   );

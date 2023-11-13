@@ -3,7 +3,6 @@ import {
   Keyboard,
   NativeSyntheticEvent,
   StyleSheet,
-  Text,
   TextInputChangeEventData,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -15,6 +14,7 @@ import { DrawerActions, useNavigation } from "@react-navigation/core";
 import CompanyListRow from "../../../components/CompanyListRow";
 import NewCompanyForm from "./NewCompanyForm";
 import { Ionicons } from "@expo/vector-icons";
+import { StackActions } from "@react-navigation/native";
 
 const CompanyList = () => {
   // Getting Drawer Navigation Actions
@@ -47,7 +47,15 @@ const CompanyList = () => {
             }}
           />
           <View style={styles.listContainer}>
-            <CompanyListRow name="Test" balance={500} contact="123" />
+            <TouchableOpacity
+              onPress={() => {
+                nav.dispatch(
+                  StackActions.push("CompanyInfo", { id: "companyid" })
+                );
+              }}
+            >
+              <CompanyListRow name="Test" balance={500} contact="123" />
+            </TouchableOpacity>
           </View>
           <NewCompanyForm
             visibility={formVisibility}

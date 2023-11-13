@@ -59,7 +59,14 @@ const PurchaseDetails = (props: Props) => {
             <Text variant="titleMedium">{450}</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.editButton}>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => {
+            nav.dispatch(
+              StackActions.push("PurchaseForm", { id: "Purchase Id" })
+            );
+          }}
+        >
           <Feather name="edit" size={24} color="black" />
         </TouchableOpacity>
       </View>
