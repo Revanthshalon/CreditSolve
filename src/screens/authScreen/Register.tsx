@@ -67,11 +67,11 @@ const Register = () => {
       <SafeAreaView style={styles.containerWrapper}>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
-            <Text variant="titleLarge" style={styles.headerLabel}>
+            <Text variant="displayLarge" style={styles.headerLabel}>
               Register
             </Text>
           </View>
-          <View>
+          <View style={styles.formContainer}>
             <TextInput
               label="Email"
               placeholder="Email"
@@ -143,11 +143,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerContainer: {},
+  headerContainer: {
+    height: 80,
+  },
   headerLabel: {},
   inputContainer: {
     gap: 20,
   },
   buttonContainer: {},
   button: {},
+  formContainer: {
+    flex: 1,
+    gap: 20,
+  },
 });

@@ -1,15 +1,24 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Appbar, Text } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
+import { useUser } from "@realm/react";
 
 type Props = {};
 
 const Setting = (props: Props) => {
   // Navigation
   const nav = useNavigation();
+
+  // Getting User Context
+  const user = useUser();
+
+  // Signout Handler
+  const signoutHandler = useCallback(async () => {
+    user?.logOut();
+  }, [user]);
 
   return (
     <SafeAreaView edges={["bottom"]} style={styles.containerWrapper}>
@@ -22,7 +31,7 @@ const Setting = (props: Props) => {
         <Appbar.Content title="Settings" />
       </Appbar.Header>
       <View style={styles.container}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={signoutHandler}>
           <Text variant="titleMedium">Logout</Text>
           <Ionicons name="log-out" size={24} color="black" />
         </TouchableOpacity>

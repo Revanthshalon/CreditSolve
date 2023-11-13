@@ -15,9 +15,9 @@ export default function App() {
   const { RealmProvider } = realmContext;
 
   return (
-    <SafeAreaProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <PaperProvider>
+    <PaperProvider>
+      <SafeAreaProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
           <NavigationContainer>
             <AppProvider id={appId} baseUrl={baseUrl}>
               <UserProvider fallback={Login}>
@@ -42,8 +42,8 @@ export default function App() {
               </UserProvider>
             </AppProvider>
           </NavigationContainer>
-        </PaperProvider>
-      </GestureHandlerRootView>
-    </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </SafeAreaProvider>
+    </PaperProvider>
   );
 }

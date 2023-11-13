@@ -3989,6 +3989,7 @@ __metadata:
     "@realm/react": ^0.6.1
     "@types/react": ~18.2.14
     expo: ~49.0.15
+    expo-splash-screen: ~0.20.5
     expo-status-bar: ~1.6.0
     react: 18.2.0
     react-native: 0.72.6
@@ -4610,6 +4611,17 @@ __metadata:
     compare-versions: ^3.4.0
     invariant: ^2.2.4
   checksum: 85a48a6d1983671458a37ddece9e151ff8179814dd368d67b39dcf34fcdc6b44419d045ac8efcdd8179848d826b67678ce706f5533314ff8ab84537befcf7915
+  languageName: node
+  linkType: hard
+
+"expo-splash-screen@npm:~0.20.5":
+  version: 0.20.5
+  resolution: "expo-splash-screen@npm:0.20.5"
+  dependencies:
+    "@expo/prebuild-config": 6.2.6
+  peerDependencies:
+    expo: "*"
+  checksum: c4b0db3d0e8ab755a9f4afb1f20824229fa84ea2410528e4316a62e676e08f990157c9edd4af0978f79183d6b47cf3d4843b86f76c084274a40e07adfd697889
   languageName: node
   linkType: hard
 

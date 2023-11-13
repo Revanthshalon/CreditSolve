@@ -33,3 +33,9 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# configuration
+atlasConfig.json
+
+# build
+ios/
