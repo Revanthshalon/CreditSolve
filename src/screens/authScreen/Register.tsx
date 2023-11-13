@@ -1,4 +1,6 @@
+import Realm from "realm";
 import {
+  Alert,
   Keyboard,
   NativeSyntheticEvent,
   StyleSheet,
@@ -6,12 +8,16 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Text, TextInput } from "react-native-paper";
 import { StackActions, useNavigation } from "@react-navigation/native";
+import { useApp } from "@realm/react";
 
 const Register = () => {
+  // App Context for Realm
+  const app = useApp();
+
   // Navigation
   const nav = useNavigation();
 
@@ -33,7 +39,21 @@ const Register = () => {
     setPasswordVisibility(true);
     setConfirmPasswordVisibility(true);
   };
-  const registerHandler = () => {};
+
+  const signIn = useCallback(async () => {
+    const creds = Realm.Credentials.emailPassword({ email, password });
+    await app.logIn(creds);
+  }, [app, email, password]);
+
+  const registerHandler = useCallback(async () => {
+    try {
+      await app.emailPasswordAuth.registerUser({ email, password });
+      await signIn();
+      formClear();
+    } catch (error: any) {
+      Alert.alert(`Failed to Register: ${error?.message}`);
+    }
+  }, [signIn, app, email, password]);
   const loginHandler = () => {
     nav.dispatch(StackActions.replace("Login"));
     formClear();
