@@ -15,6 +15,7 @@ import { Searchbar } from "react-native-paper";
 import ListRow from "../../../components/ListRow";
 import { Ionicons } from "@expo/vector-icons";
 import NewPurchaseForm from "./NewPurchaseForm";
+import { StackActions } from "@react-navigation/native";
 
 type Props = {};
 
@@ -50,7 +51,15 @@ const PurchaseList = (props: Props) => {
             }}
           />
           <View style={styles.listContainer}>
-            <ListRow name="Company Name" balance={500} date={new Date()} />
+            <TouchableOpacity
+              onPress={() => {
+                nav.dispatch(
+                  StackActions.push("PurchaseInfo", { id: "Test Id" })
+                );
+              }}
+            >
+              <ListRow name="Company Name" balance={500} date={new Date()} />
+            </TouchableOpacity>
           </View>
           <NewPurchaseForm
             visibility={formVisibility}

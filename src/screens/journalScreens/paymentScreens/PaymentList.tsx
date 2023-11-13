@@ -15,6 +15,7 @@ import { Searchbar } from "react-native-paper";
 import ListRow from "../../../components/ListRow";
 import { Ionicons } from "@expo/vector-icons";
 import NewPaymentForm from "./NewPaymentForm";
+import { StackActions } from "@react-navigation/native";
 
 type Props = {};
 
@@ -29,6 +30,11 @@ const PaymentList = (props: Props) => {
   // Add Handler
   const addHandler = () => {
     setFormVisibility(true);
+  };
+
+  // Payment Info Handler
+  const paymentInfoHandler = () => {
+    nav.dispatch(StackActions.push("PaymentInfo", {}));
   };
 
   return (
@@ -50,7 +56,13 @@ const PaymentList = (props: Props) => {
             }}
           />
           <View style={styles.listContainer}>
-            <ListRow date={new Date()} name="Company Name" balance={500} />
+            <TouchableOpacity
+              onPress={() => {
+                nav.dispatch(StackActions.push("PaymentInfo", { id: "123" }));
+              }}
+            >
+              <ListRow date={new Date()} name="Company Name" balance={500} />
+            </TouchableOpacity>
           </View>
           <NewPaymentForm
             visibility={formVisibility}
