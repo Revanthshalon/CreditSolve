@@ -124,7 +124,7 @@ const CompanyDetails = (props: Props) => {
                   mode="text"
                   onPress={() => {
                     nav.dispatch(
-                      StackActions.push("CompanyForm", { id: "test" })
+                      StackActions.push("CompanyForm", { id: route.params.id })
                     );
                   }}
                 >

@@ -7,22 +7,41 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Button, Text, TextInput } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StackActions, useNavigation } from "@react-navigation/native";
+import {
+  RouteProp,
+  StackActions,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+import realmContext from "../../../data/dbContext";
+import { RootStackParamsList } from "../../../routes/NativeStack";
+import { useObject, useUser } from "@realm/react";
+import Company from "../../../models/Company";
+import { UpdateMode } from "realm/dist/bundle";
 
 type Props = {};
 
 const EditCompanyForm = (props: Props) => {
   // Navigation
   const nav = useNavigation();
+  const route = useRoute<RouteProp<RootStackParamsList, "CompanyForm">>();
+
+  // Realm DB
+  const { useRealm, useQuery } = realmContext;
+  const realm = useRealm();
+  const user = useUser();
+
+  // Get Company Object
+  const company = useObject(Company, route.params.id);
 
   // Form Input Variable
-  const [name, setName] = useState("");
-  const [contact, setContact] = useState("");
-  const [balance, setBalance] = useState("");
+  const [name, setName] = useState(company?.name);
+  const [contact, setContact] = useState(company?.contact);
+  const [balance, setBalance] = useState(company?.balance.toString());
 
   // Form Clear
   const formClear = () => {
@@ -38,7 +57,32 @@ const EditCompanyForm = (props: Props) => {
   };
 
   // Submit Handler
-  const submitHandler = () => {};
+  const submitHandler = useCallback(
+    ({
+      name,
+      contact,
+      balance,
+    }: {
+      name: string | undefined;
+      contact: string | undefined;
+      balance: string | undefined;
+    }) => {
+      realm.write(() => {
+        if (balance)
+          realm.create(
+            Company,
+            {
+              _id: route.params.id,
+              name: name,
+              contact: contact,
+              balance: parseFloat(balance),
+            },
+            UpdateMode.Modified
+          );
+      });
+    },
+    [realm, user]
+  );
 
   return (
     <SafeAreaView style={styles.formContainer}>
@@ -90,7 +134,11 @@ const EditCompanyForm = (props: Props) => {
             <TouchableOpacity onPress={cancelHandler}>
               <Button mode="outlined">Cancel</Button>
             </TouchableOpacity>
-            <TouchableOpacity onPress={submitHandler}>
+            <TouchableOpacity
+              onPress={() => {
+                submitHandler({ name, contact, balance });
+              }}
+            >
               <Button mode="contained">Submit</Button>
             </TouchableOpacity>
           </View>
