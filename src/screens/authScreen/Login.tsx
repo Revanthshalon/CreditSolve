@@ -1,3 +1,4 @@
+import Realm from "realm";
 import {
   Keyboard,
   NativeSyntheticEvent,
@@ -6,12 +7,16 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { StackActions, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Text, TextInput } from "react-native-paper";
+import { useApp } from "@realm/react";
 
 const Login = () => {
+  // Realm App Context
+  const app = useApp();
+
   // Navigation
   const nav = useNavigation();
 
@@ -32,9 +37,11 @@ const Login = () => {
     nav.dispatch(StackActions.replace("Register"));
     formClear();
   };
-  const loginHandler = () => {
+  const loginHandler = useCallback(async () => {
+    const creds = Realm.Credentials.emailPassword({ email, password });
+    await app.logIn(creds);
     formClear();
-  };
+  }, [app, email, password]);
 
   return (
     <TouchableWithoutFeedback
