@@ -7,9 +7,12 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Button, Text, TextInput } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import realmContext from "../../../data/dbContext";
+import { useUser } from "@realm/react";
+import Company from "../../../models/Company";
 
 type Props = {
   visibility: boolean;
@@ -17,6 +20,11 @@ type Props = {
 };
 
 const NewCompanyForm = ({ visibility, setVisibility }: Props) => {
+  // Realm Instance
+  const { useRealm, useQuery } = realmContext;
+  const realm = useRealm();
+  const user = useUser();
+
   // Form Input Variable
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
@@ -36,9 +44,30 @@ const NewCompanyForm = ({ visibility, setVisibility }: Props) => {
   };
 
   // Submit Handler
-  const submitHandler = () => {
-    setVisibility();
-  };
+  const submitHandler = useCallback(
+    ({
+      name,
+      contact,
+      balance,
+    }: {
+      name: string;
+      contact: string;
+      balance: string;
+    }) => {
+      realm.write(
+        () =>
+          new Company(realm, {
+            _uid: user.id.toString(),
+            name: name,
+            contact: contact,
+            balance: parseFloat(balance),
+          })
+      );
+      setVisibility();
+      formClear();
+    },
+    [realm, user]
+  );
 
   return (
     <Modal
@@ -94,7 +123,11 @@ const NewCompanyForm = ({ visibility, setVisibility }: Props) => {
             <TouchableOpacity onPress={cancelHandler}>
               <Button mode="outlined">Cancel</Button>
             </TouchableOpacity>
-            <TouchableOpacity onPress={submitHandler}>
+            <TouchableOpacity
+              onPress={() => {
+                submitHandler({ name, contact, balance });
+              }}
+            >
               <Button mode="contained">Submit</Button>
             </TouchableOpacity>
           </View>
