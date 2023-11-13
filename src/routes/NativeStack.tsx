@@ -1,4 +1,5 @@
 import React from "react";
+import Realm from "realm";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DrawerStack from "./DrawerStack";
 import Loading from "../screens/loadingScreen/Loading";
@@ -12,20 +13,21 @@ import EditPurchaseForm from "../screens/journalScreens/purchaseScreens/EditPurc
 import EditCompanyForm from "../screens/journalScreens/companyScreens/EditCompanyForm";
 import PurchasesByCompany from "../screens/journalScreens/purchaseScreens/PurchasesByCompany";
 import PaymentsByCompany from "../screens/journalScreens/paymentScreens/PaymentsByCompany";
+import Company from "../models/Company";
 
 export type RootStackParamsList = {
   Home: undefined;
   Loading: undefined;
   Login: undefined;
   Register: undefined;
-  PaymentInfo: { id: string };
-  PurchaseInfo: { id: string };
-  CompanyInfo: { id: string };
-  CompanyForm: { id: string };
-  PaymentForm: { id: string };
-  PurchaseForm: { id: string };
-  PurchaseByCompany: { id: string };
-  PaymentByCompany: { id: string };
+  PaymentInfo: { id: Realm.BSON.ObjectId };
+  PurchaseInfo: { id: Realm.BSON.ObjectId };
+  CompanyInfo: { id: Realm.BSON.ObjectId };
+  CompanyForm: { id: Realm.BSON.ObjectId };
+  PaymentForm: { id: Realm.BSON.ObjectId };
+  PurchaseForm: { id: Realm.BSON.ObjectId };
+  PurchaseByCompany: { id: Realm.BSON.ObjectId };
+  PaymentByCompany: { id: Realm.BSON.ObjectId };
 };
 
 const NativeStack = () => {

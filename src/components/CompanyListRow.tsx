@@ -1,35 +1,80 @@
-import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
+import React, { useCallback, useState } from "react";
+import Realm from "realm";
+import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Button, Dialog, Portal, Text } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import realmContext from "../data/dbContext";
+import { useUser } from "@realm/react";
+import Company from "../models/Company";
 
 type Props = {
+  id: Realm.BSON.ObjectId;
   name: string;
   contact: string;
   balance: number;
 };
 
-const CompanyListRow = ({ name, contact, balance }: Props) => {
-  // Actions Handler
+const CompanyListRow = ({ id, name, contact, balance }: Props) => {
+  // Realm DB
+  const { useRealm, useQuery } = realmContext;
+  const realm = useRealm();
+  const user = useUser();
 
+  // Alert Toggle
+  const [showAlert, setShowAlert] = useState(false);
+
+  // Actions Handler
   const editHandler = () => {
     console.log("Edit");
   };
 
-  const deleteHandler = () => {
-    console.log("Delete");
+  const showDeleteAlert = () => {
+    setShowAlert(true);
   };
 
+  const deleteHandler = useCallback(() => {
+    // Retrieve Company Object
+    const company = realm.objectForPrimaryKey(Company, id);
+    realm.write(() => {
+      realm.delete(company);
+    });
+    setShowAlert(false);
+  }, [realm, user]);
+
   const callHandler = () => {
-    console.log("Call");
+    Linking.openURL(`tel:${contact}`);
   };
 
   const messageHandler = () => {
-    console.log("Chat");
+    Linking.openURL(`whatsapp://send?text=Hi&phone=${contact}`);
   };
 
   return (
     <View style={styles.rowContainer}>
+      <Portal>
+        <Dialog visible={showAlert}>
+          <Dialog.Title>Delete Company?</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">
+              Are you sure to delete the company details along with its
+              purchase/payment history?
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button
+              mode="text"
+              onPress={() => {
+                setShowAlert(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button mode="contained" onPress={deleteHandler}>
+              Delete
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       <View style={styles.headerContainer}>
         <Text variant="bodyLarge" style={styles.headerLabel}>
           {name}
@@ -47,7 +92,7 @@ const CompanyListRow = ({ name, contact, balance }: Props) => {
           <TouchableOpacity onPress={editHandler}>
             <Ionicons name="ios-pencil" size={20} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={deleteHandler}>
+          <TouchableOpacity onPress={showDeleteAlert}>
             <Ionicons name="ios-trash-bin" size={20} color="black" />
           </TouchableOpacity>
           <TouchableOpacity onPress={callHandler}>

@@ -77,7 +77,7 @@ const CompanyList = () => {
                     onPress={() => {
                       nav.dispatch(
                         StackActions.push("CompanyInfo", {
-                          id: item._id.toString(),
+                          id: item._id,
                         })
                       );
                     }}
@@ -86,6 +86,7 @@ const CompanyList = () => {
                       name={item.name}
                       balance={item.balance}
                       contact={item.contact}
+                      id={item._id}
                     />
                   </TouchableOpacity>
                 );

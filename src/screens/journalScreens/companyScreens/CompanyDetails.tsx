@@ -1,31 +1,58 @@
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
-import { StackActions, useNavigation } from "@react-navigation/native";
+import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import {
+  RouteProp,
+  StackActions,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Appbar, Button, DataTable, Divider, Text } from "react-native-paper";
+import {
+  Appbar,
+  Button,
+  DataTable,
+  Dialog,
+  Divider,
+  Portal,
+  Text,
+} from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import NewPaymentForm from "../paymentScreens/NewPaymentForm";
 import NewPurchaseForm from "../purchaseScreens/NewPurchaseForm";
+import { RootStackParamsList } from "../../../routes/NativeStack";
+import realmContext from "../../../data/dbContext";
+import { useUser } from "@realm/react";
+import Company from "../../../models/Company";
 
 type Props = {};
 
 const CompanyDetails = (props: Props) => {
+  // React DB Context
+  const { useRealm, useQuery } = realmContext;
+  const realm = useRealm();
+  const user = useUser();
+
   // Navigation
   const nav = useNavigation();
+  const route = useRoute<RouteProp<RootStackParamsList, "CompanyInfo">>();
+
+  // Get Company Details
+  const company = realm.objectForPrimaryKey(Company, route.params.id);
 
   // Toggle Form Visibility
   const [paymentFormVisibility, setPaymentFormVisibility] = useState(false);
   const [purchaseFormVisibility, setPurchaseFormVisibility] = useState(false);
+  const [alertVisibility, setAlertVisibility] = useState(false);
 
   // Action Handlers
-  const deleteHandler = () => {
-    console.log("delete");
+  const confirmDelete = () => {
+    setAlertVisibility(true);
   };
   const callHandler = () => {
-    console.log("Call");
+    Linking.openURL(`tel:${company?.contact}`);
   };
   const messageHandler = () => {
-    console.log("Message");
+    Linking.openURL(`whatsapp://send?text=Hi&phone=${company?.contact}`);
   };
   const purchaseAddHandler = () => {
     setPurchaseFormVisibility(true);
@@ -33,6 +60,19 @@ const CompanyDetails = (props: Props) => {
   const paymentAddHandler = () => {
     setPaymentFormVisibility(true);
   };
+  const cancelAlert = () => {
+    setAlertVisibility(false);
+  };
+  const deleteHandler = useCallback(() => {
+    const company = realm.objectForPrimaryKey(Company, route.params.id);
+    if (company) {
+      realm.write(() => {
+        realm.delete(company);
+      });
+    }
+    nav.dispatch(StackActions.pop(1));
+  }, [realm, company]);
+
   return (
     <SafeAreaView style={styles.containerWrapper} edges={["bottom"]}>
       <View style={styles.containerWrapper}>
@@ -43,16 +83,40 @@ const CompanyDetails = (props: Props) => {
             }}
           />
           <Appbar.Content title="Company Details" />
-          <Appbar.Action icon="delete" onPress={deleteHandler} />
+          <Appbar.Action icon="delete" onPress={confirmDelete} />
         </Appbar.Header>
+        <Portal>
+          <Dialog visible={alertVisibility}>
+            <Dialog.Title>Delete Company?</Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">
+                Are you sure to delete the company details along with its
+                purchase/payment history?
+              </Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button mode="text" onPress={cancelAlert}>
+                Cancel
+              </Button>
+              <Button mode="contained" onPress={deleteHandler}>
+                Delete
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
         <View style={styles.container}>
           <View style={styles.card}>
             <View style={styles.companyDetails}>
-              <Text variant="titleLarge">Company Name</Text>
-              <Text variant="bodyMedium">Contact No.</Text>
+              <Text variant="titleLarge">{company?.name}</Text>
+              <Text variant="bodyMedium">{company?.contact}</Text>
             </View>
             <View style={styles.balanceDetails}>
-              <Text variant="bodyLarge">Balance</Text>
+              <Text variant="bodyLarge">
+                {company?.balance.toLocaleString("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                })}
+              </Text>
             </View>
             <View style={styles.actionContainer}>
               <View>
