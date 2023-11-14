@@ -21,7 +21,6 @@ import realmContext from "../../../data/dbContext";
 import { RootStackParamsList } from "../../../routes/NativeStack";
 import { useObject, useUser } from "@realm/react";
 import Company from "../../../models/Company";
-import { UpdateMode } from "realm/dist/bundle";
 
 type Props = {};
 
@@ -36,7 +35,7 @@ const EditCompanyForm = (props: Props) => {
   const user = useUser();
 
   // Get Company Object
-  const company = useObject(Company, route.params.id);
+  const company = realm.objectForPrimaryKey(Company, route.params.id);
 
   // Form Input Variable
   const [name, setName] = useState(company?.name);
@@ -67,19 +66,14 @@ const EditCompanyForm = (props: Props) => {
       contact: string | undefined;
       balance: string | undefined;
     }) => {
-      realm.write(() => {
-        if (balance)
-          realm.create(
-            Company,
-            {
-              _id: route.params.id,
-              name: name,
-              contact: contact,
-              balance: parseFloat(balance),
-            },
-            UpdateMode.Modified
-          );
-      });
+      if (name && contact && balance && company) {
+        realm.write(() => {
+          company.name = name;
+          company.contact = contact;
+          company.balance = parseFloat(balance);
+        });
+      }
+      nav.dispatch(StackActions.pop(1));
     },
     [realm, user]
   );

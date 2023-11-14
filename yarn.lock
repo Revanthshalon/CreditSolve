@@ -3993,6 +3993,7 @@ __metadata:
     expo-status-bar: ~1.6.0
     react: 18.2.0
     react-native: 0.72.6
+    react-native-element-dropdown: ^2.10.0
     react-native-gesture-handler: ~2.12.0
     react-native-paper: ^5.11.1
     react-native-paper-dates: ^0.20.4
@@ -7797,6 +7798,18 @@ __metadata:
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 9d6d111d8990dc98bc5402c1266a808b0459b5d54830bbea24c12d908b536df7883f268a7868cfaedde3dd9d4e0d574db456f84d2e6df9c4526f99bb4b5344d8
+  languageName: node
+  linkType: hard
+
+"react-native-element-dropdown@npm:^2.10.0":
+  version: 2.10.0
+  resolution: "react-native-element-dropdown@npm:2.10.0"
+  dependencies:
+    lodash: ^4.17.21
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 74cec25d0f9d888670d5d56ca2484a55f263c9d5540b6cc96b45a0ad0fb1dfcc61ddf3edae9dad26c8caa1894c586adfd9f42f42f2adaa78c498e4a4554951b7
   languageName: node
   linkType: hard
 

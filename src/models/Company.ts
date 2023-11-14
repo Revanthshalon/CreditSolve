@@ -36,14 +36,6 @@ class Company extends Realm.Object<Company> {
         type: "float",
         optional: false,
       },
-      purchases: {
-        type: "list",
-        objectType: "Purchase",
-      },
-      payments: {
-        type: "list",
-        objectType: "Payment",
-      },
     },
   };
 }

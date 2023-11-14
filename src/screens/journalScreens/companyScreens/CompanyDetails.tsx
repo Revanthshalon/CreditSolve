@@ -1,5 +1,5 @@
 import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   RouteProp,
   StackActions,
@@ -23,10 +23,15 @@ import { RootStackParamsList } from "../../../routes/NativeStack";
 import realmContext from "../../../data/dbContext";
 import { useUser } from "@realm/react";
 import Company from "../../../models/Company";
+import { useIsFocused } from "@react-navigation/native";
 
 type Props = {};
 
 const CompanyDetails = (props: Props) => {
+  // Refresh Page
+  const isFocused = useIsFocused();
+  useEffect(() => {}, [isFocused]);
+
   // React DB Context
   const { useRealm, useQuery } = realmContext;
   const realm = useRealm();

@@ -5,7 +5,7 @@ class Payment extends Realm.Object<Payment> {
   _id!: Realm.BSON.ObjectId;
   date!: Date;
   amount!: number;
-  company!: Company;
+  c_id!: string;
 
   static schema: Realm.ObjectSchema = {
     name: "Payment",
@@ -23,10 +23,10 @@ class Payment extends Realm.Object<Payment> {
         type: "float",
         default: () => 0.0,
       },
-      company: {
-        type: "linkingObjects",
-        objectType: "Company",
-        property: "payments",
+      c_id: {
+        type: "string",
+        indexed: true,
+        optional: false,
       },
     },
   };

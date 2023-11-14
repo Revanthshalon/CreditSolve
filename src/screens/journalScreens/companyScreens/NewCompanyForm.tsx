@@ -13,6 +13,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import realmContext from "../../../data/dbContext";
 import { useUser } from "@realm/react";
 import Company from "../../../models/Company";
+import Payment from "../../../models/Payment";
+import Realm from "realm";
+import Purchase from "../../../models/Purchase";
 
 type Props = {
   visibility: boolean;
