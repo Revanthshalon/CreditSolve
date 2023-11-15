@@ -1,4 +1,5 @@
 import {
+  FlatList,
   Keyboard,
   NativeSyntheticEvent,
   StyleSheet,
@@ -16,12 +17,27 @@ import ListRow from "../../../components/ListRow";
 import { Ionicons } from "@expo/vector-icons";
 import NewPurchaseForm from "./NewPurchaseForm";
 import { StackActions } from "@react-navigation/native";
+import realmContext from "../../../data/dbContext";
+import Purchase from "../../../models/Purchase";
+import { useUser } from "@realm/react";
+import Company from "../../../models/Company";
 
 type Props = {};
 
 const PurchaseList = (props: Props) => {
   // Getting Drawer Navigation Actions
   const nav = useNavigation();
+
+  // Realm DB
+  const { useRealm, useQuery } = realmContext;
+  const realm = useRealm();
+  const user = useUser();
+
+  // Purchases List
+  const purchaseList = useQuery(Purchase)
+    .filtered(`u_id == "${user.id.toString()}"`)
+    .sorted("date", true);
+
   // Search Text Variable
   const [searchText, setSearchText] = useState("");
   // New Form Toggle
@@ -51,15 +67,33 @@ const PurchaseList = (props: Props) => {
             }}
           />
           <View style={styles.listContainer}>
-            <TouchableOpacity
-              onPress={() => {
-                nav.dispatch(
-                  StackActions.push("PurchaseInfo", { id: "Test Id" })
+            <FlatList
+              data={purchaseList}
+              keyExtractor={(item) => item._id.toString()}
+              renderItem={({ item }) => {
+                const companyInfo = realm.objectForPrimaryKey(
+                  Company,
+                  new Realm.BSON.ObjectId(item.c_id)
+                );
+                return (
+                  <TouchableOpacity
+                    onPress={() => {
+                      nav.dispatch(
+                        StackActions.push("PurchaseInfo", {
+                          id: item._id,
+                        })
+                      );
+                    }}
+                  >
+                    <ListRow
+                      date={item.date}
+                      name={companyInfo ? companyInfo.name : ""}
+                      balance={item.amount}
+                    />
+                  </TouchableOpacity>
                 );
               }}
-            >
-              <ListRow name="Company Name" balance={500} date={new Date()} />
-            </TouchableOpacity>
+            />
           </View>
           <NewPurchaseForm
             visibility={formVisibility}

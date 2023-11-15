@@ -32,7 +32,7 @@ const PaymentList = (props: Props) => {
   // Getting Payment Details
   const Payments = useQuery(Payment)
     .filtered(`u_id == "${user?.id.toString()}"`)
-    .sorted("date");
+    .sorted("date", true);
 
   const Companies = useQuery(Company)
     .filtered(`_uid == "${user?.id.toString()}"`)
