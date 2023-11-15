@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContainer: {
+    flex: 1,
     marginTop: 10,
   },
   addButton: {

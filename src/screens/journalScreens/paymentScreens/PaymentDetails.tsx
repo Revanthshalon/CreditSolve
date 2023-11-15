@@ -12,14 +12,30 @@ import {
 import { RootStackParamsList } from "../../../routes/NativeStack";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import realmContext from "../../../data/dbContext";
+import { useUser } from "@realm/react";
+import Payment from "../../../models/Payment";
+import Company from "../../../models/Company";
 
 type Props = {};
 
 const PaymentDetails = (props: Props) => {
+  // Realm Db
+  const { useRealm, useQuery } = realmContext;
+  const realm = useRealm();
+  const user = useUser();
+
   // Get Navigation Methods
   const route = useRoute<RouteProp<RootStackParamsList, "PaymentInfo">>();
   const nav =
     useNavigation<NavigationProp<RootStackParamsList, "PaymentInfo">>();
+
+  // Payment Details
+  const paymentInfo = realm.objectForPrimaryKey(Payment, route.params.id);
+  const companyInfo = realm.objectForPrimaryKey(
+    Company,
+    new Realm.BSON.ObjectId(paymentInfo?.c_id)
+  );
 
   return (
     <SafeAreaView style={styles.containerWrapper} edges={["bottom"]}>
@@ -37,14 +53,14 @@ const PaymentDetails = (props: Props) => {
           <TouchableOpacity
             onPress={() => {
               nav.dispatch(
-                StackActions.push("CompanyInfo", { id: "Company Id" })
+                StackActions.push("CompanyInfo", { id: companyInfo?._id })
               );
             }}
             style={styles.companyInfo}
           >
             <View>
               <Text variant="bodySmall">Company Name</Text>
-              <Text variant="titleMedium">{"XYZ"}</Text>
+              <Text variant="titleMedium">{companyInfo?.name}</Text>
             </View>
 
             <View>
@@ -53,17 +69,21 @@ const PaymentDetails = (props: Props) => {
           </TouchableOpacity>
           <View>
             <Text variant="bodySmall">Date</Text>
-            <Text variant="titleMedium">{Date()}</Text>
+            <Text variant="titleMedium">
+              {paymentInfo?.date.toDateString()}
+            </Text>
           </View>
           <View>
             <Text variant="bodySmall">Payment Amount</Text>
-            <Text variant="titleMedium">{450}</Text>
+            <Text variant="titleMedium">{paymentInfo?.amount}</Text>
           </View>
         </View>
         <TouchableOpacity
           style={styles.editButton}
           onPress={() => {
-            nav.dispatch(StackActions.push("PaymentForm", { id: "paymentid" }));
+            nav.dispatch(
+              StackActions.push("PaymentForm", { id: paymentInfo?._id })
+            );
           }}
         >
           <Feather name="edit" size={24} color="black" />
