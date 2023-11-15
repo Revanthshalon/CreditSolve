@@ -131,7 +131,7 @@ const NewPaymentForm = ({ visibility, setVisibility }: Props) => {
               <View style={{ marginVertical: 20 }}>
                 <DatePickerInput
                   locale="en-IN"
-                  label="Purchase Date"
+                  label="Payment Date"
                   value={date}
                   onChange={(d) => setDate(d)}
                   inputMode="start"
