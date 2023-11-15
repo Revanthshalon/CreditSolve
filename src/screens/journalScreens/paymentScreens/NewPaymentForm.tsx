@@ -60,7 +60,7 @@ const NewPaymentForm = ({ visibility, setVisibility }: Props) => {
   // Form Clear
   const formClear = () => {
     setName(undefined);
-    setDate(new Date());
+    setDate(undefined);
     setAmount("");
   };
 
@@ -86,6 +86,7 @@ const NewPaymentForm = ({ visibility, setVisibility }: Props) => {
           date: date,
           amount: parseFloat(amount),
           c_id: name?.id.toString(),
+          u_id: user?.id.toString(),
         });
       });
       setVisibility();

@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     height: 80,
+    marginBottom: 10,
   },
   headerContainer: {
     justifyContent: "space-between",

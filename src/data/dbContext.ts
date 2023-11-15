@@ -5,7 +5,7 @@ import Payment from "../models/Payment";
 
 const realmContext = createRealmContext({
   schema: [Company, Purchase, Payment],
-  schemaVersion: 3,
+  schemaVersion: 4,
 });
 
 export default realmContext;

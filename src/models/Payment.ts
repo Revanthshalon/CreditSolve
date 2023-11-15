@@ -6,6 +6,7 @@ class Payment extends Realm.Object<Payment> {
   date!: Date;
   amount!: number;
   c_id!: string;
+  u_id!: string;
 
   static schema: Realm.ObjectSchema = {
     name: "Payment",
@@ -24,6 +25,11 @@ class Payment extends Realm.Object<Payment> {
         default: () => 0.0,
       },
       c_id: {
+        type: "string",
+        indexed: true,
+        optional: false,
+      },
+      u_id: {
         type: "string",
         indexed: true,
         optional: false,

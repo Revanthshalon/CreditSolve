@@ -36,7 +36,7 @@ const CompanyList = () => {
     realm.subscriptions.update((mutableSubs) =>
       mutableSubs.add(Companies, { name: "UserSubscriptions" })
     );
-  }, []);
+  }, [user]);
 
   // Getting Drawer Navigation Actions
   const nav = useNavigation();

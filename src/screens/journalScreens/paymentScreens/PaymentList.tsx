@@ -1,4 +1,5 @@
 import {
+  FlatList,
   Keyboard,
   NativeSyntheticEvent,
   StyleSheet,
@@ -8,7 +9,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerActions, useNavigation } from "@react-navigation/core";
 import { Searchbar } from "react-native-paper";
@@ -16,10 +17,35 @@ import ListRow from "../../../components/ListRow";
 import { Ionicons } from "@expo/vector-icons";
 import NewPaymentForm from "./NewPaymentForm";
 import { StackActions } from "@react-navigation/native";
+import realmContext from "../../../data/dbContext";
+import { useUser } from "@realm/react";
+import Payment from "../../../models/Payment";
+import Company from "../../../models/Company";
 
 type Props = {};
 
 const PaymentList = (props: Props) => {
+  // Realm DB
+  const { useRealm, useQuery } = realmContext;
+  const realm = useRealm();
+  const user = useUser();
+
+  // Getting Payment Details
+  const Payments = useQuery(Payment)
+    .filtered(`u_id == "${user?.id.toString()}"`)
+    .sorted("date");
+
+  const Companies = useQuery(Company)
+    .filtered(`_uid == "${user?.id.toString()}"`)
+    .sorted("_id");
+
+  // Change the Companies list if the user is changed
+  useEffect(() => {
+    realm.subscriptions.update((mutableSubs) =>
+      mutableSubs.add(Payments, { name: "UserSubscriptions" })
+    );
+  }, [user]);
+
   // Getting Drawer Navigation Actions
   const nav = useNavigation();
   // Search Text Variable
@@ -30,11 +56,6 @@ const PaymentList = (props: Props) => {
   // Add Handler
   const addHandler = () => {
     setFormVisibility(true);
-  };
-
-  // Payment Info Handler
-  const paymentInfoHandler = () => {
-    nav.dispatch(StackActions.push("PaymentInfo", {}));
   };
 
   return (
@@ -56,13 +77,33 @@ const PaymentList = (props: Props) => {
             }}
           />
           <View style={styles.listContainer}>
-            <TouchableOpacity
-              onPress={() => {
-                nav.dispatch(StackActions.push("PaymentInfo", { id: "123" }));
+            <FlatList
+              data={Payments}
+              keyExtractor={(item) => item._id.toString()}
+              renderItem={({ item }) => {
+                const companyInfo = realm.objectForPrimaryKey(
+                  Company,
+                  new Realm.BSON.ObjectId(item.c_id)
+                );
+                return (
+                  <TouchableOpacity
+                    onPress={() => {
+                      nav.dispatch(
+                        StackActions.push("PaymentInfo", {
+                          id: item._id,
+                        })
+                      );
+                    }}
+                  >
+                    <ListRow
+                      date={item.date}
+                      name={companyInfo ? companyInfo.name : ""}
+                      balance={item.amount}
+                    />
+                  </TouchableOpacity>
+                );
               }}
-            >
-              <ListRow date={new Date()} name="Company Name" balance={500} />
-            </TouchableOpacity>
+            />
           </View>
           <NewPaymentForm
             visibility={formVisibility}
