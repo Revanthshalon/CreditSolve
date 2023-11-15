@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Appbar, Text } from "react-native-paper";
+import { Appbar, Button, Dialog, Portal, Text } from "react-native-paper";
 import {
   NavigationProp,
   RouteProp,
@@ -37,6 +37,28 @@ const PaymentDetails = (props: Props) => {
     new Realm.BSON.ObjectId(paymentInfo?.c_id)
   );
 
+  // Toggle Variables
+  const [alertVisibility, setAlertVisibility] = useState(false);
+
+  // Action Handlers
+  const deleteAlertHandler = () => {
+    setAlertVisibility(true);
+  };
+
+  const cancelAlert = () => {
+    setAlertVisibility(false);
+  };
+
+  const deleteHandler = useCallback(() => {
+    const payment = realm.objectForPrimaryKey(Payment, route.params.id);
+    if (payment) {
+      realm.write(() => {
+        realm.delete(payment);
+      });
+      nav.dispatch(StackActions.pop(1));
+    }
+  }, [realm, paymentInfo]);
+
   return (
     <SafeAreaView style={styles.containerWrapper} edges={["bottom"]}>
       <View style={styles.container}>
@@ -47,8 +69,26 @@ const PaymentDetails = (props: Props) => {
             }}
           />
           <Appbar.Content title="Payment Details" />
-          <Appbar.Action icon="delete" onPress={() => {}} />
+          <Appbar.Action icon="delete" onPress={deleteAlertHandler} />
         </Appbar.Header>
+        <Portal>
+          <Dialog visible={alertVisibility}>
+            <Dialog.Title>Delete Payment Details?</Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">
+                This action will delete payment details. Proceed with Deletion?
+              </Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button mode="text" onPress={cancelAlert}>
+                Cancel
+              </Button>
+              <Button mode="contained" onPress={deleteHandler}>
+                Delete
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
         <View style={styles.card}>
           <TouchableOpacity
             onPress={() => {

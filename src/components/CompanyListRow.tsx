@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
   },
   bodyContainer: {
     justifyContent: "space-between",
+    alignItems: "flex-end",
   },
   bodyBalanceLabel: {},
   bodyActionsContainer: {

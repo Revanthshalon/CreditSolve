@@ -1,16 +1,43 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Appbar, DataTable } from "react-native-paper";
-import { StackActions, useNavigation } from "@react-navigation/native";
+import {
+  RouteProp,
+  StackActions,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import NewPaymentForm from "./NewPaymentForm";
+import { RootStackParamsList } from "../../../routes/NativeStack";
+import realmContext from "../../../data/dbContext";
+import { useUser } from "@realm/react";
+import Payment from "../../../models/Payment";
 
 type Props = {};
 
 const PaymentsByCompany = (props: Props) => {
   // Navigation
   const nav = useNavigation();
+  const route = useRoute<RouteProp<RootStackParamsList, "PurchaseByCompany">>();
+
+  // Realm DB
+  const { useRealm, useQuery } = realmContext;
+  const realm = useRealm();
+  const user = useUser();
+
+  // Payment List
+  const paymentList = useQuery(Payment)
+    .filtered(`c_id == "${route.params.id.toString()}"`)
+    .sorted("date", true);
+
   // New Form Toggle
   const [formVisibility, setFormVisibility] = useState(false);
 
@@ -35,6 +62,23 @@ const PaymentsByCompany = (props: Props) => {
             <DataTable.Title>Date</DataTable.Title>
             <DataTable.Title>Purchase Amount</DataTable.Title>
           </DataTable.Header>
+          <FlatList
+            data={paymentList}
+            keyExtractor={(item) => item._id.toString()}
+            renderItem={({ item }) => {
+              return (
+                <DataTable.Row>
+                  <DataTable.Cell>{item.date.toDateString()}</DataTable.Cell>
+                  <DataTable.Cell>
+                    {item.amount.toLocaleString("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                    })}
+                  </DataTable.Cell>
+                </DataTable.Row>
+              );
+            }}
+          />
         </DataTable>
         <NewPaymentForm
           visibility={formVisibility}

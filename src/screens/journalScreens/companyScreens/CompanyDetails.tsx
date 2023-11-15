@@ -1,4 +1,10 @@
-import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Linking,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   RouteProp,
@@ -24,6 +30,9 @@ import realmContext from "../../../data/dbContext";
 import { useUser } from "@realm/react";
 import Company from "../../../models/Company";
 import { useIsFocused } from "@react-navigation/native";
+import Payment from "../../../models/Payment";
+import PaymentList from "../paymentScreens/PaymentList";
+import Purchase from "../../../models/Purchase";
 
 type Props = {};
 
@@ -43,6 +52,12 @@ const CompanyDetails = (props: Props) => {
 
   // Get Company Details
   const company = realm.objectForPrimaryKey(Company, route.params.id);
+  const paymentsList = useQuery(Payment)
+    .filtered(`c_id == "${route.params.id}"`)
+    .sorted("date", true);
+  const purchasesList = useQuery(Purchase)
+    .filtered(`c_id == "${route.params.id}"`)
+    .sorted("date", true);
 
   // Toggle Form Visibility
   const [paymentFormVisibility, setPaymentFormVisibility] = useState(false);
@@ -158,12 +173,33 @@ const CompanyDetails = (props: Props) => {
                 <DataTable.Title>Purchase Amount</DataTable.Title>
               </DataTable.Header>
             </DataTable>
+            <FlatList
+              data={purchasesList}
+              keyExtractor={(item) => item._id.toString()}
+              renderItem={({ item }) => {
+                return (
+                  <DataTable.Row id={item._id.toString()}>
+                    <DataTable.Cell>{item.date.toDateString()}</DataTable.Cell>
+                    <DataTable.Cell>
+                      {item.amount.toLocaleString("en-IN", {
+                        style: "currency",
+                        currency: "INR",
+                      })}
+                    </DataTable.Cell>
+                  </DataTable.Row>
+                );
+              }}
+            />
           </View>
           <View style={styles.tableActions}>
             <Button
               mode="text"
               onPress={() => {
-                nav.dispatch(StackActions.push("PurchaseByCompany"));
+                nav.dispatch(
+                  StackActions.push("PurchaseByCompany", {
+                    id: route.params.id,
+                  })
+                );
               }}
             >
               VIEW
@@ -190,12 +226,31 @@ const CompanyDetails = (props: Props) => {
                 <DataTable.Title>Payment Amount</DataTable.Title>
               </DataTable.Header>
             </DataTable>
+            <FlatList
+              data={paymentsList}
+              keyExtractor={(item) => item._id.toString()}
+              renderItem={({ item }) => {
+                return (
+                  <DataTable.Row id={item._id.toString()}>
+                    <DataTable.Cell>{item.date.toDateString()}</DataTable.Cell>
+                    <DataTable.Cell>
+                      {item.amount.toLocaleString("en-IN", {
+                        style: "currency",
+                        currency: "INR",
+                      })}
+                    </DataTable.Cell>
+                  </DataTable.Row>
+                );
+              }}
+            />
           </View>
           <View style={styles.tableActions}>
             <Button
               mode="text"
               onPress={() => {
-                nav.dispatch(StackActions.push("PaymentByCompany"));
+                nav.dispatch(
+                  StackActions.push("PaymentByCompany", { id: route.params.id })
+                );
               }}
             >
               VIEW

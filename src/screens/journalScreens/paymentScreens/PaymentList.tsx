@@ -3,7 +3,6 @@ import {
   Keyboard,
   NativeSyntheticEvent,
   StyleSheet,
-  Text,
   TextInputChangeEventData,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -46,8 +45,9 @@ const PaymentList = (props: Props) => {
     );
   }, [user]);
 
-  // Getting Drawer Navigation Actions
+  // Getting Drawer Navigation Actions and Params
   const nav = useNavigation();
+
   // Search Text Variable
   const [searchText, setSearchText] = useState("");
   // New Form Toggle
