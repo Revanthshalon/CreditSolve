@@ -26,7 +26,7 @@ type Props = {};
 const PaymentsByCompany = (props: Props) => {
   // Navigation
   const nav = useNavigation();
-  const route = useRoute<RouteProp<RootStackParamsList, "PurchaseByCompany">>();
+  const route = useRoute<RouteProp<RootStackParamsList, "PaymentByCompany">>();
 
   // Realm DB
   const { useRealm, useQuery } = realmContext;
