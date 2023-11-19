@@ -3,8 +3,6 @@ import Realm from "realm";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DrawerStack from "./DrawerStack";
 import Loading from "../screens/loadingScreen/Loading";
-import Login from "../screens/authScreen/Login";
-import Register from "../screens/authScreen/Register";
 import PaymentDetails from "../screens/journalScreens/paymentScreens/PaymentDetails";
 import PurchaseDetails from "../screens/journalScreens/purchaseScreens/PurchaseDetails";
 import CompanyDetails from "../screens/journalScreens/companyScreens/CompanyDetails";
@@ -18,8 +16,6 @@ import Company from "../models/Company";
 export type RootStackParamsList = {
   Home: undefined;
   Loading: undefined;
-  Login: undefined;
-  Register: undefined;
   PaymentInfo: { id: Realm.BSON.ObjectId };
   PurchaseInfo: { id: Realm.BSON.ObjectId };
   CompanyInfo: { id: Realm.BSON.ObjectId };
@@ -36,8 +32,6 @@ const NativeStack = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={DrawerStack} />
       <Stack.Screen name="Loading" component={Loading} />
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="PaymentInfo" component={PaymentDetails} />
       <Stack.Screen name="PurchaseInfo" component={PurchaseDetails} />
       <Stack.Screen name="CompanyInfo" component={CompanyDetails} />

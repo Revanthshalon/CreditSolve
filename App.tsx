@@ -9,41 +9,42 @@ import { appId, baseUrl } from "./atlasConfig.json";
 import Login from "./src/screens/authScreen/Login";
 import realmContext from "./src/data/dbContext";
 import Loading from "./src/screens/loadingScreen/Loading";
+import UnAuthStack from "./src/routes/UnAuthStack";
 
 export default function App() {
   // Getting Realm Provider
   const { RealmProvider } = realmContext;
 
   return (
-    <NavigationContainer>
-      <PaperProvider>
-        <SafeAreaProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <AppProvider id={appId} baseUrl={baseUrl}>
-              <UserProvider fallback={Login}>
-                <RealmProvider
-                  sync={{
-                    flexible: true,
-                    onError: (_, error) => {
-                      console.log(error);
-                    },
-                    initialSubscriptions: {
-                      update(subs, realm) {
-                        subs.add(realm.objects("Company")),
-                          subs.add(realm.objects("Purchase")),
-                          subs.add(realm.objects("Payment"));
-                      },
-                    },
-                  }}
-                  fallback={Loading}
-                >
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AppProvider id={appId} baseUrl={baseUrl}>
+          <UserProvider fallback={UnAuthStack}>
+            <RealmProvider
+              sync={{
+                flexible: true,
+                onError: (_, error) => {
+                  console.log(error);
+                },
+                initialSubscriptions: {
+                  update(subs, realm) {
+                    subs.add(realm.objects("Company")),
+                      subs.add(realm.objects("Purchase")),
+                      subs.add(realm.objects("Payment"));
+                  },
+                },
+              }}
+              fallback={Loading}
+            >
+              <PaperProvider>
+                <NavigationContainer>
                   <NativeStack />
-                </RealmProvider>
-              </UserProvider>
-            </AppProvider>
-          </GestureHandlerRootView>
-        </SafeAreaProvider>
-      </PaperProvider>
-    </NavigationContainer>
+                </NavigationContainer>
+              </PaperProvider>
+            </RealmProvider>
+          </UserProvider>
+        </AppProvider>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
