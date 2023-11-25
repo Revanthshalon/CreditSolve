@@ -8,22 +8,45 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Button, Text, TextInput } from "react-native-paper";
 import { DatePickerInput } from "react-native-paper-dates";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StackActions, useNavigation } from "@react-navigation/native";
+import {
+  RouteProp,
+  StackActions,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+import { RootStackParamsList } from "../../../routes/NativeStack";
+import realmContext from "../../../data/dbContext";
+import { useUser } from "@realm/react";
+import Payment from "../../../models/Payment";
+import Company from "../../../models/Company";
 
 type Props = {};
 
 const EditPaymentForm = (props: Props) => {
   // Navigation
   const nav = useNavigation();
+  const route = useRoute<RouteProp<RootStackParamsList, "PaymentForm">>();
+
+  // Realm Db
+  const { useRealm, useQuery } = realmContext;
+  const realm = useRealm();
+  const user = useUser();
+
+  // Get Payment Object
+  const payment = realm.objectForPrimaryKey(Payment, route.params.id);
+  const company = realm.objectForPrimaryKey(
+    Company,
+    new Realm.BSON.ObjectId(payment?.c_id)
+  );
 
   // Form Input Variable
-  const [name, setName] = useState("");
-  const [date, setDate] = useState<Date | undefined>();
-  const [amount, setAmount] = useState("");
+  const [name, setName] = useState(company?.name);
+  const [date, setDate] = useState<Date | undefined>(payment?.date);
+  const [amount, setAmount] = useState(payment?.amount.toString());
 
   // Form Clear
   const formClear = () => {
@@ -39,7 +62,24 @@ const EditPaymentForm = (props: Props) => {
   };
 
   // Submit Handler
-  const submitHandler = () => {};
+  const submitHandler = useCallback(
+    ({
+      date,
+      amount,
+    }: {
+      date: Date | undefined;
+      amount: string | undefined;
+    }) => {
+      if (date && amount && payment) {
+        realm.write(() => {
+          payment.date = date;
+          payment.amount = parseFloat(amount);
+        });
+      }
+      nav.dispatch(StackActions.pop(1));
+    },
+    [realm, user]
+  );
   return (
     <SafeAreaView style={styles.formContainer}>
       <TouchableWithoutFeedback
@@ -89,8 +129,12 @@ const EditPaymentForm = (props: Props) => {
             <TouchableOpacity onPress={cancelHandler}>
               <Button mode="outlined">Cancel</Button>
             </TouchableOpacity>
-            <TouchableOpacity onPress={submitHandler}>
-              <Button mode="contained">Submit</Button>
+            <TouchableOpacity
+              onPress={() => {
+                submitHandler({ date, amount });
+              }}
+            >
+              <Button mode="contained">Update</Button>
             </TouchableOpacity>
           </View>
         </View>

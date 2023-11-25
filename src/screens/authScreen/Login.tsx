@@ -8,17 +8,22 @@ import {
   View,
 } from "react-native";
 import React, { useCallback, useState } from "react";
-import { StackActions, useNavigation } from "@react-navigation/native";
+import {
+  NavigationProp,
+  StackActions,
+  useNavigation,
+} from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Text, TextInput } from "react-native-paper";
 import { useApp } from "@realm/react";
+import { UnAuthStackParamList } from "../../routes/UnAuthStack";
 
 const Login = () => {
   // Realm App Context
   const app = useApp();
 
   // Navigation
-  const nav = useNavigation();
+  const nav = useNavigation<NavigationProp<UnAuthStackParamList, "Login">>();
 
   // Form input variables
   const [email, setEmail] = useState("");
@@ -34,7 +39,7 @@ const Login = () => {
     setPasswordVisibility(true);
   };
   const registerHandler = () => {
-    nav.dispatch(StackActions.replace("Register"));
+    nav.dispatch(StackActions.push("Register"));
     formClear();
   };
   const loginHandler = useCallback(async () => {
@@ -51,8 +56,8 @@ const Login = () => {
       <SafeAreaView style={styles.containerWrapper}>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
-            <Text variant="titleLarge" style={styles.headerLabel}>
-              Register
+            <Text variant="displayLarge" style={styles.headerLabel}>
+              Login
             </Text>
           </View>
           <View>
@@ -107,11 +112,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerContainer: {},
+  headerContainer: {
+    height: 80,
+  },
   headerLabel: {},
   inputContainer: {
     gap: 20,
   },
   buttonContainer: {},
   button: {},
+  formContainer: {
+    flex: 1,
+    gap: 20,
+  },
 });

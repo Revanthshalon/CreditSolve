@@ -11,15 +11,20 @@ import {
 import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Text, TextInput } from "react-native-paper";
-import { StackActions, useNavigation } from "@react-navigation/native";
+import {
+  NavigationProp,
+  StackActions,
+  useNavigation,
+} from "@react-navigation/native";
 import { useApp } from "@realm/react";
+import { UnAuthStackParamList } from "../../routes/UnAuthStack";
 
 const Register = () => {
   // App Context for Realm
   const app = useApp();
 
   // Navigation
-  const nav = useNavigation();
+  const nav = useNavigation<NavigationProp<UnAuthStackParamList, "Register">>();
 
   // Form input variables
   const [email, setEmail] = useState("");
@@ -55,7 +60,7 @@ const Register = () => {
     }
   }, [signIn, app, email, password]);
   const loginHandler = () => {
-    nav.dispatch(StackActions.replace("Login"));
+    nav.dispatch(StackActions.pop(1));
     formClear();
   };
 

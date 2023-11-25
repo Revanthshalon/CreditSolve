@@ -1,11 +1,12 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Appbar, Button, Dialog, Portal, Text } from "react-native-paper";
 import {
   NavigationProp,
   RouteProp,
   StackActions,
+  useIsFocused,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
@@ -20,6 +21,10 @@ import Company from "../../../models/Company";
 type Props = {};
 
 const PurchaseDetails = (props: Props) => {
+  // Refresh Page
+  const isFocused = useIsFocused();
+  useEffect(() => {}, [isFocused]);
+
   // Realm Db
   const { useRealm, useQuery } = realmContext;
   const realm = useRealm();
@@ -122,7 +127,7 @@ const PurchaseDetails = (props: Props) => {
           style={styles.editButton}
           onPress={() => {
             nav.dispatch(
-              StackActions.push("PaymentForm", { id: purchaseInfo?._id })
+              StackActions.push("PurchaseForm", { id: purchaseInfo?._id })
             );
           }}
         >
