@@ -38,6 +38,16 @@ const PaymentList = (props: Props) => {
     .filtered(`_uid == "${user?.id.toString()}"`)
     .sorted("_id");
 
+  const enrichedPayments = Payments.map((item) => {
+    return {
+      ...item,
+      name: realm.objectForPrimaryKey(
+        Company,
+        new Realm.BSON.ObjectId(item.c_id)
+      ),
+    };
+  });
+
   // Change the Companies list if the user is changed
   useEffect(() => {
     realm.subscriptions.update((mutableSubs) =>
@@ -57,6 +67,19 @@ const PaymentList = (props: Props) => {
   const addHandler = () => {
     setFormVisibility(true);
   };
+
+  const filteredPayments =
+    searchText === ""
+      ? enrichedPayments
+      : enrichedPayments.filter((item) => {
+          if (
+            item.name?.name.toLowerCase().includes(searchText.toLowerCase())
+          ) {
+            return item;
+          } else {
+            return null;
+          }
+        });
 
   return (
     <SafeAreaView style={styles.containerWrapper} edges={["top"]}>
@@ -78,7 +101,7 @@ const PaymentList = (props: Props) => {
           />
           <View style={styles.listContainer}>
             <FlatList
-              data={Payments}
+              data={filteredPayments}
               keyExtractor={(item) => item._id.toString()}
               renderItem={({ item }) => {
                 const companyInfo = realm.objectForPrimaryKey(

@@ -51,12 +51,16 @@ const Register = () => {
   }, [app, email, password]);
 
   const registerHandler = useCallback(async () => {
-    try {
-      await app.emailPasswordAuth.registerUser({ email, password });
-      await signIn();
-      formClear();
-    } catch (error: any) {
-      Alert.alert(`Failed to Register: ${error?.message}`);
+    if (password === confirmPassword) {
+      try {
+        await app.emailPasswordAuth.registerUser({ email, password });
+        await signIn();
+        formClear();
+      } catch (error: any) {
+        Alert.alert(`Failed to Register: ${error?.message}`);
+      }
+    } else {
+      Alert.alert("Passwords don't match");
     }
   }, [signIn, app, email, password]);
   const loginHandler = () => {

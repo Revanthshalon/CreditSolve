@@ -38,6 +38,16 @@ const PurchaseList = (props: Props) => {
     .filtered(`u_id == "${user.id.toString()}"`)
     .sorted("date", true);
 
+  const enrichedPurchase = purchaseList.map((item) => {
+    return {
+      ...item,
+      name: realm.objectForPrimaryKey(
+        Company,
+        new Realm.BSON.ObjectId(item.c_id)
+      ),
+    };
+  });
+
   // Search Text Variable
   const [searchText, setSearchText] = useState("");
   // New Form Toggle
@@ -47,6 +57,19 @@ const PurchaseList = (props: Props) => {
   const addHandler = () => {
     setFormVisibility(true);
   };
+
+  const filteredPurchase =
+    searchText === ""
+      ? enrichedPurchase
+      : enrichedPurchase.filter((item) => {
+          if (
+            item.name?.name.toLowerCase().includes(searchText.toLowerCase())
+          ) {
+            return item;
+          } else {
+            return null;
+          }
+        });
 
   return (
     <SafeAreaView style={styles.containerWrapper} edges={["top"]}>
@@ -68,7 +91,7 @@ const PurchaseList = (props: Props) => {
           />
           <View style={styles.listContainer}>
             <FlatList
-              data={purchaseList}
+              data={filteredPurchase}
               keyExtractor={(item) => item._id.toString()}
               renderItem={({ item }) => {
                 const companyInfo = realm.objectForPrimaryKey(
@@ -100,6 +123,7 @@ const PurchaseList = (props: Props) => {
             setVisibility={() => {
               setFormVisibility((previousState) => !previousState);
             }}
+            prefilled={false}
           />
           <TouchableOpacity style={styles.addButton} onPress={addHandler}>
             <Ionicons name="ios-add" size={24} color="black" />

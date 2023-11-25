@@ -60,7 +60,7 @@ const Login = () => {
               Login
             </Text>
           </View>
-          <View>
+          <View style={styles.formContainer}>
             <TextInput
               label="Email"
               placeholder="Email"
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   buttonContainer: {},
   button: {},
   formContainer: {
-    flex: 1,
     gap: 20,
+    paddingBottom: 20,
   },
 });
