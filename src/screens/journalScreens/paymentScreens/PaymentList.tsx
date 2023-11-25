@@ -110,6 +110,7 @@ const PaymentList = (props: Props) => {
             setVisibility={() => {
               setFormVisibility((previousState) => !previousState);
             }}
+            prefilled={false}
           />
           <TouchableOpacity style={styles.addButton} onPress={addHandler}>
             <Ionicons name="ios-add" size={24} color="black" />

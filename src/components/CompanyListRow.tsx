@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import realmContext from "../data/dbContext";
 import { useUser } from "@realm/react";
 import Company from "../models/Company";
+import { StackActions, useNavigation } from "@react-navigation/native";
 
 type Props = {
   id: Realm.BSON.ObjectId;
@@ -15,6 +16,9 @@ type Props = {
 };
 
 const CompanyListRow = ({ id, name, contact, balance }: Props) => {
+  // Navigation
+  const nav = useNavigation();
+
   // Realm DB
   const { useRealm, useQuery } = realmContext;
   const realm = useRealm();
@@ -25,7 +29,7 @@ const CompanyListRow = ({ id, name, contact, balance }: Props) => {
 
   // Actions Handler
   const editHandler = () => {
-    console.log("Edit");
+    nav.dispatch(StackActions.push("CompanyForm", { id: id }));
   };
 
   const showDeleteAlert = () => {

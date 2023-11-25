@@ -27,9 +27,16 @@ import Payment from "../../../models/Payment";
 type Props = {
   visibility: boolean;
   setVisibility: () => void;
+  prefilled: true | false;
+  companyId?: string;
 };
 
-const NewPaymentForm = ({ visibility, setVisibility }: Props) => {
+const NewPaymentForm = ({
+  visibility,
+  setVisibility,
+  prefilled,
+  companyId,
+}: Props) => {
   // Nav Prop
   const nav = useNavigation();
 
@@ -85,7 +92,7 @@ const NewPaymentForm = ({ visibility, setVisibility }: Props) => {
         return new Payment(realm, {
           date: date,
           amount: parseFloat(amount),
-          c_id: name?.id.toString(),
+          c_id: prefilled ? companyId : name?.id.toString(),
           u_id: user?.id.toString(),
         });
       });
@@ -112,22 +119,24 @@ const NewPaymentForm = ({ visibility, setVisibility }: Props) => {
               </Text>
             </View>
             <View style={styles.inputContainer}>
-              <Dropdown
-                style={styles.dropDown}
-                placeholder="Select Company"
-                selectedTextStyle={styles.dropdownSelectedText}
-                placeholderStyle={styles.dropDownPlaceholder}
-                search
-                data={companiesList}
-                value={name}
-                onChange={(item) => {
-                  setName(item);
-                }}
-                maxHeight={250}
-                labelField="name"
-                valueField="id"
-                searchPlaceholder="Search Company"
-              />
+              {!prefilled && (
+                <Dropdown
+                  style={styles.dropDown}
+                  placeholder="Select Company"
+                  selectedTextStyle={styles.dropdownSelectedText}
+                  placeholderStyle={styles.dropDownPlaceholder}
+                  search
+                  data={companiesList}
+                  value={name}
+                  onChange={(item) => {
+                    setName(item);
+                  }}
+                  maxHeight={250}
+                  labelField="name"
+                  valueField="id"
+                  searchPlaceholder="Search Company"
+                />
+              )}
               <View style={{ marginVertical: 20 }}>
                 <DatePickerInput
                   locale="en-IN"

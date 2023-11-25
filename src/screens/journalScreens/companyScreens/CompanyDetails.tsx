@@ -213,6 +213,8 @@ const CompanyDetails = (props: Props) => {
             setVisibility={() => {
               setPurchaseFormVisibility((previousState) => !previousState);
             }}
+            prefilled={true}
+            companyId={company?._id.toHexString()}
           />
           <Divider />
           <View style={styles.tableTitle}>
@@ -264,6 +266,8 @@ const CompanyDetails = (props: Props) => {
             setVisibility={() => {
               setPaymentFormVisibility((previousState) => !previousState);
             }}
+            prefilled={true}
+            companyId={company?._id.toHexString()}
           />
         </View>
       </View>
@@ -306,7 +310,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   tableContainer: {
-    height: 165,
+    height: 210,
   },
   tableActions: {
     flexDirection: "row",
