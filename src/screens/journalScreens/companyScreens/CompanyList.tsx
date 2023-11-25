@@ -45,6 +45,18 @@ const CompanyList = () => {
   // New Form Toggle
   const [formVisibility, setFormVisibility] = useState(false);
 
+  // Company Search Filter
+  const filteredData =
+    searchText === ""
+      ? Companies
+      : Companies.filter((item) => {
+          if (item.name.toLowerCase().includes(searchText.toLowerCase())) {
+            return item;
+          } else {
+            return null;
+          }
+        });
+
   // Add Button Handler
   const addHandler = () => {
     setFormVisibility(true);
@@ -69,7 +81,7 @@ const CompanyList = () => {
           />
           <View style={styles.listContainer}>
             <FlatList
-              data={Companies}
+              data={filteredData}
               keyExtractor={(item) => item._id.toString()}
               renderItem={({ item }) => {
                 return (
